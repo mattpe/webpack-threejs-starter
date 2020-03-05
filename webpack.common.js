@@ -1,19 +1,33 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
   entry: {
     app: './src/index.js',
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin({
-      title: 'This is something',
-      meta: {
-        viewport: 'width=device-width, user-scalable=no, initial-scale=1.0'
+    new CleanWebpackPlugin(),
+    new WriteFilePlugin(),
+    new CopyPlugin([
+      {
+        from: 'assets/',
+        to: 'assets/',
+        context: 'src/',
       },
-      template: './src/index.html'
+    ]),
+    new HtmlWebpackPlugin({
+      title: 'Webpack three.js Starter',
+      meta: {
+        viewport: 'width=device-width, initial-scale=1.0'
+      },
+      template: './src/index.html',
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true
+      },
     })
   ],
   output: {
@@ -34,6 +48,14 @@ module.exports = {
         options: {
           // eslint options (check .eslintrc.json too)
         }
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
